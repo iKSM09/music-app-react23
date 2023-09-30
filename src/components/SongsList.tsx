@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   Headphones,
@@ -29,7 +22,7 @@ const SongsList = () => {
 
       <CardContent className="flex items-center justify-between mt-5">
         <div className="flex items-start gap-3">
-          <div className="my-[2px]">
+          <div className="my-[3px]">
             {true ? <PlayCircle /> : <PauseCircle />}
           </div>
           <div>
