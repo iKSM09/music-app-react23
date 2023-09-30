@@ -1,3 +1,4 @@
+import MusicPlayer from "./components/MusicPlayer";
 import Navigation from "./components/Navigation";
 import ThemeProvider from "./context/theme.provider";
 
@@ -6,6 +7,8 @@ function App() {
     <ThemeProvider>
       <div>
         <Navigation />
+
+        <MusicPlayer />
       </div>
     </ThemeProvider>
   );

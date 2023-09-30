@@ -29,7 +29,7 @@ const Navigation = () => {
   };
 
   return (
-    <NavigationMenu className="flex items-center justify-between h-16 max-w-full px-4 border-b">
+    <NavigationMenu className="sticky flex items-center justify-between h-16 max-w-full px-6 border-b">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink href="/">
