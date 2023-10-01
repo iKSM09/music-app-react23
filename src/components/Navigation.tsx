@@ -15,10 +15,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Toggle } from "@/components/ui/toggle";
 import { useThemeContext } from "@/context";
 
 import { Sun, Moon } from "lucide-react";
+import Auth from "./Auth";
 
 const Navigation = () => {
   const { theme, setTheme } = useThemeContext();
@@ -38,9 +48,17 @@ const Navigation = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
-            Login / Register
-          </NavigationMenuLink>
+          <Dialog>
+            <DialogTrigger className={navigationMenuTriggerStyle()}>
+              Login / Register
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Your Account.</DialogTitle>
+              </DialogHeader>
+              <Auth />
+            </DialogContent>
+          </Dialog>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
