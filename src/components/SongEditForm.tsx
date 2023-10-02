@@ -1,5 +1,6 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 import {
   Form,
@@ -12,24 +13,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 
-import { LoginSchema } from "./Auth";
-import type { LoginTypes } from "./Auth";
+const schema = z.object({
+  name: z.string(),
+  genre: z.string(),
+});
 
-const AuthLoginForm = () => {
-  const form = useForm<LoginTypes>({
+export type SongDetailTypes = z.infer<typeof schema>;
+
+const SongEditForm = () => {
+  const form = useForm<SongDetailTypes>({
     mode: "onBlur",
     defaultValues: {
-      email: "",
-      password: "",
+      name: "",
+      genre: "",
     },
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(schema),
   });
 
-  const onSubmitSuccess = async (data: LoginTypes) => {
+  const onSubmitSuccess = async (data: SongDetailTypes) => {
     console.log({ data });
   };
 
-  const onSubmitError = (errors: FieldErrors<LoginTypes>) => {
+  const onSubmitError = (errors: FieldErrors<SongDetailTypes>) => {
     console.error({ errors });
   };
 
@@ -41,15 +46,15 @@ const AuthLoginForm = () => {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <div className="flex justify-between">
-                <FormLabel>Email:</FormLabel>
+              <div>
+                <FormLabel>Title:</FormLabel>
                 <FormMessage />
               </div>
               <FormControl>
-                <Input placeholder="Email Id" {...field} />
+                <Input placeholder="Song Title" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -57,26 +62,27 @@ const AuthLoginForm = () => {
 
         <FormField
           control={form.control}
-          name="password"
+          name="genre"
           render={({ field }) => (
             <FormItem>
-              <div className="flex justify-between">
-                <FormLabel>Password:</FormLabel>
+              <div>
+                <FormLabel>Genre:</FormLabel>
                 <FormMessage />
               </div>
               <FormControl>
-                <Input placeholder="Password" {...field} />
+                <Input placeholder="Song Genre" {...field} />
               </FormControl>
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Login
-        </Button>
+        <div className="flex gap-3">
+          <Button>Submit</Button>
+          <Button variant="secondary">Go Back</Button>
+        </div>
       </form>
     </Form>
   );
 };
 
-export default AuthLoginForm;
+export default SongEditForm;

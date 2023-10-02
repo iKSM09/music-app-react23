@@ -11,7 +11,7 @@ import {
 
 const MusicPlayer = () => {
   return (
-    <div className="absolute bottom-0 z-10 w-full h-20 border bg-muted text-muted-foreground music-player muted">
+    <div className="fixed bottom-0 left-0 z-10 w-full h-20 p-0 m-0 border bg-muted text-muted-foreground">
       <div className="w-full h-1 bg-primary"></div>
       <div className="flex items-center justify-between h-full px-6 ">
         <div className="flex items-center gap-2">

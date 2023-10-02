@@ -10,7 +10,7 @@ import {
 
 const SongsList = () => {
   return (
-    <Card className="mx-12 my-5">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <p>Songs</p>

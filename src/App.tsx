@@ -5,6 +5,7 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import ThemeProvider from "./context/theme.provider";
 import HomePage from "./pages/HomePage.tsx";
 import Root from "./routes/root.tsx";
+import ManageSongsPage from "./pages/ManageSongsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
         index: true,
         // element: <HomePage />,
         Component: HomePage,
+      },
+      {
+        path: "/manage",
+        Component: ManageSongsPage,
       },
     ],
   },
