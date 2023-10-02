@@ -76,6 +76,17 @@ const Navigation = () => {
               Manage
             </NavLink>
           </NavigationMenuItem>
+
+          <NavigationMenuItem className={navigationMenuTriggerStyle()}>
+            <NavLink
+              to="/song/songId"
+              className={({ isActive, isPending }) =>
+                isPending ? "text-secondary" : isActive ? "text-primary" : ""
+              }
+            >
+              Song
+            </NavLink>
+          </NavigationMenuItem>
         </NavigationMenuList>
 
         <NavigationMenuList>
