@@ -28,9 +28,11 @@ import { useThemeContext } from "@/context";
 
 import { Sun, Moon } from "lucide-react";
 import Auth from "./Auth";
+import { useState } from "react";
 
 const Navigation = () => {
   const { theme, setTheme } = useThemeContext();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const toggleTheme = () => {
     console.log("Theme changed!");
@@ -53,7 +55,7 @@ const Navigation = () => {
           </NavigationMenuItem>
 
           <NavigationMenuItem>
-            <Dialog>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
               <DialogTrigger className={navigationMenuTriggerStyle()}>
                 Login / Register
               </DialogTrigger>
@@ -61,7 +63,7 @@ const Navigation = () => {
                 <DialogHeader>
                   <DialogTitle>Your Account.</DialogTitle>
                 </DialogHeader>
-                <Auth />
+                <Auth setDialogOpen={setDialogOpen} />
               </DialogContent>
             </Dialog>
           </NavigationMenuItem>

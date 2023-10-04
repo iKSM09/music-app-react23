@@ -14,8 +14,14 @@ import { Button } from "./ui/button";
 
 import { LoginSchema } from "./Auth";
 import type { LoginTypes } from "./Auth";
+import { login } from "@/utils/firebase/auth.firebase";
+import { Dispatch, SetStateAction } from "react";
 
-const AuthLoginForm = () => {
+type AuthLoginFormTypes = {
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+const AuthLoginForm = ({ setDialogOpen }: AuthLoginFormTypes) => {
   const form = useForm<LoginTypes>({
     mode: "onBlur",
     defaultValues: {
@@ -25,8 +31,14 @@ const AuthLoginForm = () => {
     resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmitSuccess = async (data: LoginTypes) => {
-    console.log({ data });
+  const onSubmitSuccess = async ({ email, password }: LoginTypes) => {
+    try {
+      await login(email, password);
+      form.reset();
+      setDialogOpen(false);
+    } catch (error) {
+      console.error("login submit error", error);
+    }
   };
 
   const onSubmitError = (errors: FieldErrors<LoginTypes>) => {

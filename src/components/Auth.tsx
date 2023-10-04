@@ -1,11 +1,13 @@
+import { Dispatch, SetStateAction } from "react";
+import * as z from "zod";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import * as z from "zod";
 import AuthLoginForm from "./AuthLoginForm";
 import AuthRegisterForm from "./AuthRegisterForm";
 
 const schema = z.object({
-  name: z.string().nonempty("Name is required."),
+  displayName: z.string().nonempty("Name is required."),
   // username: z.string().nonempty("Username is required."),
   email: z
     .string()
@@ -19,6 +21,14 @@ const schema = z.object({
     .min(6, "Password must be greater than 6 characters.")
     .max(30, "Password must be lesser than 30 characters."),
   confirmPassword: z.string().nonempty("Password is required."),
+  // tos: z.boolean({
+  //   required_error: "Please accept Terms of Service to proceed.",
+  //   invalid_type_error: "Value must be a boolean",
+  // }),
+  tos: z.literal<boolean>(true, {
+    required_error: "Please accept Terms of Service to proceed.",
+    invalid_type_error: "Please accept Terms of Service to proceed.",
+  }),
 });
 
 export const RegisterationSchema = schema.refine(
@@ -37,7 +47,11 @@ export const LoginSchema = schema.pick({
 export type RegisterTypes = z.infer<typeof RegisterationSchema>;
 export type LoginTypes = z.infer<typeof LoginSchema>;
 
-const Auth = () => {
+type AuthTypes = {
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+const Auth = ({ setDialogOpen }: AuthTypes) => {
   return (
     <Tabs defaultValue="login">
       <TabsList className="grid w-full grid-cols-2 mt-3 mb-5">
@@ -45,10 +59,10 @@ const Auth = () => {
         <TabsTrigger value="register">Register</TabsTrigger>
       </TabsList>
       <TabsContent value="login">
-        <AuthLoginForm />
+        <AuthLoginForm setDialogOpen={setDialogOpen} />
       </TabsContent>
       <TabsContent value="register">
-        <AuthRegisterForm />
+        <AuthRegisterForm setDialogOpen={setDialogOpen} />
       </TabsContent>
     </Tabs>
   );

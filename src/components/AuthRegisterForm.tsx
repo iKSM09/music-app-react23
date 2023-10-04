@@ -1,9 +1,6 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { RegisterationSchema } from "./Auth";
-import type { RegisterTypes } from "./Auth";
-
 import {
   Form,
   FormControl,
@@ -14,25 +11,45 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
-const AuthRegisterForm = () => {
+import { RegisterationSchema } from "./Auth";
+import type { RegisterTypes } from "./Auth";
+import { register } from "@/utils/firebase/auth.firebase";
+import { Dispatch, SetStateAction } from "react";
+
+type AuthRegisterFormTypes = {
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+const AuthRegisterForm = ({ setDialogOpen }: AuthRegisterFormTypes) => {
   const form = useForm<RegisterTypes>({
     mode: "onBlur",
     defaultValues: {
-      name: "",
+      displayName: "",
       // username: "",
       email: "",
       // age: 0,
       // country: "",
       password: "",
       confirmPassword: "",
+      tos: false,
     },
     resolver: zodResolver(RegisterationSchema),
   });
 
-  const onSubmitSuccess = async (data: RegisterTypes) => {
-    console.log({ data });
+  const onSubmitSuccess = async ({
+    displayName,
+    email,
+    password,
+  }: RegisterTypes) => {
+    try {
+      await register(displayName, email, password);
+      form.reset();
+      setDialogOpen(false);
+    } catch (error) {
+      console.error("register submit error", error);
+    }
   };
 
   const onSubmitError = (errors: FieldErrors<RegisterTypes>) => {
@@ -47,7 +64,7 @@ const AuthRegisterForm = () => {
       >
         <FormField
           control={form.control}
-          name="name"
+          name="displayName"
           render={({ field }) => (
             <FormItem>
               <div className="flex justify-between">
@@ -60,20 +77,6 @@ const AuthRegisterForm = () => {
             </FormItem>
           )}
         />
-
-        {/* <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username:</FormLabel>
-              <FormControl>
-                <Input placeholder="Username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         <FormField
           control={form.control}
@@ -90,34 +93,6 @@ const AuthRegisterForm = () => {
             </FormItem>
           )}
         />
-
-        {/* <FormField
-          control={form.control}
-          name="age"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Age:</FormLabel>
-              <FormControl>
-                <Input placeholder="Age" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Country:</FormLabel>
-              <FormControl>
-                <Input placeholder="Country" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         <FormField
           control={form.control}
@@ -155,15 +130,24 @@ const AuthRegisterForm = () => {
           )}
         />
 
-        <div className="flex items-center space-x-2">
-          <Checkbox id="terms" />
-          <label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Accept terms and conditions
-          </label>
-        </div>
+        <FormField
+          control={form.control}
+          name="tos"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center space-x-2">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>Accept terms and conditions</FormLabel>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="w-full">
           Register
