@@ -7,6 +7,7 @@ import SongPage from "./pages/SongPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 
 import ThemeProvider from "./context/theme.provider";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,13 @@ const router = createBrowserRouter([
         Component: HomePage,
       },
       {
-        path: "/manage",
-        Component: ManageSongsPage,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/manage",
+            Component: ManageSongsPage,
+          },
+        ],
       },
       {
         path: "/song/:songId",

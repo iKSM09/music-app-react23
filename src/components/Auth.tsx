@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import * as z from "zod";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,11 +46,7 @@ export const LoginSchema = schema.pick({
 export type RegisterTypes = z.infer<typeof RegisterationSchema>;
 export type LoginTypes = z.infer<typeof LoginSchema>;
 
-type AuthTypes = {
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-const Auth = ({ setDialogOpen }: AuthTypes) => {
+const Auth = () => {
   return (
     <Tabs defaultValue="login">
       <TabsList className="grid w-full grid-cols-2 mt-3 mb-5">
@@ -59,10 +54,10 @@ const Auth = ({ setDialogOpen }: AuthTypes) => {
         <TabsTrigger value="register">Register</TabsTrigger>
       </TabsList>
       <TabsContent value="login">
-        <AuthLoginForm setDialogOpen={setDialogOpen} />
+        <AuthLoginForm />
       </TabsContent>
       <TabsContent value="register">
-        <AuthRegisterForm setDialogOpen={setDialogOpen} />
+        <AuthRegisterForm />
       </TabsContent>
     </Tabs>
   );

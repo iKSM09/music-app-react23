@@ -1,5 +1,6 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 
 import {
   Form,
@@ -13,16 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
+import { authDialogAtom } from "@/context/atoms";
 import { RegisterationSchema } from "./Auth";
 import type { RegisterTypes } from "./Auth";
 import { register } from "@/utils/firebase/auth.firebase";
-import { Dispatch, SetStateAction } from "react";
 
-type AuthRegisterFormTypes = {
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-};
+const AuthRegisterForm = () => {
+  const setAuthDialogOpen = useSetAtom(authDialogAtom);
 
-const AuthRegisterForm = ({ setDialogOpen }: AuthRegisterFormTypes) => {
   const form = useForm<RegisterTypes>({
     mode: "onBlur",
     defaultValues: {
@@ -46,7 +45,7 @@ const AuthRegisterForm = ({ setDialogOpen }: AuthRegisterFormTypes) => {
     try {
       await register(displayName, email, password);
       form.reset();
-      setDialogOpen(false);
+      setAuthDialogOpen(false);
     } catch (error) {
       console.error("register submit error", error);
     }

@@ -4,6 +4,13 @@ import { User } from "firebase/auth";
 
 const db = getFirestore(firebaseApp);
 
+// Get User Data
+export const getUserData = async (user: User) => {
+  const docRef = doc(db, "users", user.uid);
+  const docSnapshot = await getDoc(docRef);
+  return docSnapshot.data();
+};
+
 // Creating `New User` in Users Collection
 export const createNewUserDoc = async (user: User) => {
   if (!user) return;

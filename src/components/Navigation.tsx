@@ -29,9 +29,15 @@ import { useThemeContext } from "@/context";
 import { Sun, Moon } from "lucide-react";
 import Auth from "./Auth";
 import { useState } from "react";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { Button } from "./ui/button";
+import { useAtom } from "jotai";
+import { authDialogAtom } from "@/context/atoms";
 
 const Navigation = () => {
+  const user = useCurrentUser();
   const { theme, setTheme } = useThemeContext();
+  const [authDialogOpen, setAuthDialogOpen] = useAtom(authDialogAtom);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const toggleTheme = () => {
@@ -55,17 +61,25 @@ const Navigation = () => {
           </NavigationMenuItem>
 
           <NavigationMenuItem>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
-              <DialogTrigger className={navigationMenuTriggerStyle()}>
-                Login / Register
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Your Account.</DialogTitle>
-                </DialogHeader>
-                <Auth setDialogOpen={setDialogOpen} />
-              </DialogContent>
-            </Dialog>
+            {user ? (
+              <Button>Logout</Button>
+            ) : (
+              <Dialog
+                open={authDialogOpen}
+                onOpenChange={setAuthDialogOpen}
+                modal={true}
+              >
+                <DialogTrigger className={navigationMenuTriggerStyle()}>
+                  Login / Register
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Your Account.</DialogTitle>
+                  </DialogHeader>
+                  <Auth setDialogOpen={setDialogOpen} />
+                </DialogContent>
+              </Dialog>
+            )}
           </NavigationMenuItem>
 
           <NavigationMenuItem className={navigationMenuTriggerStyle()}>

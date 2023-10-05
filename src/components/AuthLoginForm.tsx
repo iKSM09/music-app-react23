@@ -1,5 +1,6 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 
 import {
   Form,
@@ -12,16 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 
+import { authDialogAtom } from "@/context/atoms";
 import { LoginSchema } from "./Auth";
 import type { LoginTypes } from "./Auth";
 import { login } from "@/utils/firebase/auth.firebase";
-import { Dispatch, SetStateAction } from "react";
 
-type AuthLoginFormTypes = {
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-};
+const AuthLoginForm = () => {
+  const setAuthDialogOpen = useSetAtom(authDialogAtom);
 
-const AuthLoginForm = ({ setDialogOpen }: AuthLoginFormTypes) => {
   const form = useForm<LoginTypes>({
     mode: "onBlur",
     defaultValues: {
@@ -35,7 +34,7 @@ const AuthLoginForm = ({ setDialogOpen }: AuthLoginFormTypes) => {
     try {
       await login(email, password);
       form.reset();
-      setDialogOpen(false);
+      setAuthDialogOpen(false);
     } catch (error) {
       console.error("login submit error", error);
     }
