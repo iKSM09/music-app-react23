@@ -1,9 +1,8 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
@@ -28,17 +27,17 @@ import { useThemeContext } from "@/context";
 
 import { Sun, Moon } from "lucide-react";
 import Auth from "./Auth";
-import { useState } from "react";
+
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { Button } from "./ui/button";
 import { useAtom } from "jotai";
 import { authDialogAtom } from "@/context/atoms";
+import { logout } from "@/utils/firebase/auth.firebase";
 
 const Navigation = () => {
   const user = useCurrentUser();
   const { theme, setTheme } = useThemeContext();
   const [authDialogOpen, setAuthDialogOpen] = useAtom(authDialogAtom);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const toggleTheme = () => {
     console.log("Theme changed!");
@@ -58,28 +57,6 @@ const Navigation = () => {
             >
               <p className="mr-2 text-2xl font-bold">Music</p>
             </NavLink>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem>
-            {user ? (
-              <Button>Logout</Button>
-            ) : (
-              <Dialog
-                open={authDialogOpen}
-                onOpenChange={setAuthDialogOpen}
-                modal={true}
-              >
-                <DialogTrigger className={navigationMenuTriggerStyle()}>
-                  Login / Register
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Your Account.</DialogTitle>
-                  </DialogHeader>
-                  <Auth setDialogOpen={setDialogOpen} />
-                </DialogContent>
-              </Dialog>
-            )}
           </NavigationMenuItem>
 
           <NavigationMenuItem className={navigationMenuTriggerStyle()}>
@@ -106,6 +83,30 @@ const Navigation = () => {
         </NavigationMenuList>
 
         <NavigationMenuList>
+          <NavigationMenuItem>
+            {user ? (
+              <Button variant="ghost" onClick={logout}>
+                Logout
+              </Button>
+            ) : (
+              <Dialog
+                open={authDialogOpen}
+                onOpenChange={setAuthDialogOpen}
+                modal={true}
+              >
+                <DialogTrigger className={navigationMenuTriggerStyle()}>
+                  Login / Register
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Your Account.</DialogTitle>
+                  </DialogHeader>
+                  <Auth />
+                </DialogContent>
+              </Dialog>
+            )}
+          </NavigationMenuItem>
+
           <NavigationMenuItem>
             <Select defaultValue="en">
               <SelectTrigger className="w-32">

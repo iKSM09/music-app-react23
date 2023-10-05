@@ -47,7 +47,7 @@ const ManageSongsPage = () => {
           <Card className="w-full">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <h3 className="text-xl font-bold">Song Title</h3>
+                <p className="text-xl font-bold">Song Title</p>
 
                 <div className="flex gap-4">
                   <Button>
@@ -68,7 +68,7 @@ const ManageSongsPage = () => {
           <Card className="w-full">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <h3 className="text-xl font-bold">Song Title</h3>
+                <p className="text-xl font-bold">Song Title</p>
 
                 <div className="flex gap-4">
                   <Button>
@@ -91,7 +91,7 @@ const ManageSongsPage = () => {
           <Card className="w-full">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <h3 className="text-xl font-bold">Song Title</h3>
+                <p className="text-xl font-bold">Song Title</p>
 
                 <div className="flex gap-4">
                   <Button>

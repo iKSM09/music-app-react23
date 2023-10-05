@@ -1,15 +1,13 @@
-import { authDialogAtom } from "@/context/atoms";
+import { Outlet } from "react-router-dom";
+
+import Auth from "./Auth";
+
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { useSetAtom } from "jotai";
-import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
   const user = useCurrentUser();
-  const setAuthDialogOpen = useSetAtom(authDialogAtom);
 
-  setAuthDialogOpen(true);
-
-  return user ? <Outlet /> : <Navigate to="/" />;
+  return user ? <Outlet /> : <Auth />;
 };
 
 export default ProtectedRoute;

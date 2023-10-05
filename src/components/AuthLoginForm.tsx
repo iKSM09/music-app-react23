@@ -16,7 +16,7 @@ import { Button } from "./ui/button";
 import { authDialogAtom } from "@/context/atoms";
 import { LoginSchema } from "./Auth";
 import type { LoginTypes } from "./Auth";
-import { login } from "@/utils/firebase/auth.firebase";
+import { loginWithPersistence } from "@/utils/firebase/auth.firebase";
 
 const AuthLoginForm = () => {
   const setAuthDialogOpen = useSetAtom(authDialogAtom);
@@ -32,7 +32,7 @@ const AuthLoginForm = () => {
 
   const onSubmitSuccess = async ({ email, password }: LoginTypes) => {
     try {
-      await login(email, password);
+      await loginWithPersistence(email, password);
       form.reset();
       setAuthDialogOpen(false);
     } catch (error) {
