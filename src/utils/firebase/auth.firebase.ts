@@ -3,17 +3,14 @@ import {
   User,
   browserSessionPersistence,
   createUserWithEmailAndPassword,
-  getAuth,
   onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { firebaseApp } from ".";
-import { createNewUserDoc } from "./db.firebase";
-
-const auth = getAuth(firebaseApp);
+import { auth } from ".";
+import { createNewUserDoc } from "./db.user.firebase";
 
 export const loginWithPersistence = async (email: string, password: string) => {
   setPersistence(auth, browserSessionPersistence)

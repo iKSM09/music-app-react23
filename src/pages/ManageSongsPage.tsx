@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +10,13 @@ import SongEditForm from "@/components/SongEditForm";
 import { Upload, Disc3, Pencil, Trash } from "lucide-react";
 
 const ManageSongsPage = () => {
+  const handleFileEvent = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+
+    console.log({ files });
+    console.log("0:", files![0]);
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <Card>
@@ -29,7 +38,13 @@ const ManageSongsPage = () => {
         <Separator />
 
         <CardContent className="flex items-center justify-between mt-5">
-          <Input id="song" type="file" />
+          <Input
+            id="song"
+            type="file"
+            onChange={handleFileEvent}
+            multiple
+            accept="audio/mpeg"
+          />
         </CardContent>
       </Card>
 

@@ -1,8 +1,6 @@
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import { firebaseApp } from ".";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from ".";
 import { User } from "firebase/auth";
-
-const db = getFirestore(firebaseApp);
 
 // Get User Data
 export const getUserData = async (user: User) => {
