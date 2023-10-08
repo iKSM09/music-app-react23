@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, DragEvent, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,28 @@ import SongEditForm from "@/components/SongEditForm";
 
 import { Upload, Disc3, Pencil, Trash } from "lucide-react";
 
-const ManageSongsPage = () => {
-  const handleFileEvent = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+import ProgressBar from "@/components/ProgressBar";
 
-    console.log({ files });
-    console.log("0:", files![0]);
+const ManageSongsPage = () => {
+  const [songList, setSongList] = useState<File[]>([]);
+  // const [uploads, setUploads] = useState<UploadTypes[]>([]);
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleOnDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const fileList = e.dataTransfer.files;
+    if (fileList.length > 0) setSongList([...fileList]);
+  };
+
+  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files!;
+    if (fileList.length > 0) setSongList([...fileList]);
   };
 
   return (
@@ -30,7 +46,11 @@ const ManageSongsPage = () => {
         <Separator />
 
         <CardContent className="flex items-center justify-between mt-5">
-          <div className="flex items-center justify-center w-full text-sm border-2 border-dashed rounded-md h-60 hover:bg-muted">
+          <div
+            onDragOver={handleDragOver}
+            onDrop={handleOnDrop}
+            className="flex items-center justify-center w-full text-sm border-2 border-dashed rounded-md h-60 hover:bg-muted"
+          >
             Drop your files here
           </div>
         </CardContent>
@@ -41,10 +61,30 @@ const ManageSongsPage = () => {
           <Input
             id="song"
             type="file"
-            onChange={handleFileEvent}
             multiple
+            onChange={handleFileEvent}
             accept="audio/mpeg"
           />
+        </CardContent>
+
+        <CardContent className="mt-1">
+          <Separator className="mb-2" />
+
+          {/* Progess Bars */}
+          <div className="w-full my-7">
+            {/* File Name */}
+            <div className="mb-1 text-sm font-bold">Just another song.mp3</div>
+            <div className="flex h-4 overflow-hidden bg-gray-200 rounded">
+              {/* Inner Progress Bar */}
+              <div
+                className="transition-all bg-blue-400 progress-bar"
+                style={{ width: "75%" }}
+              ></div>
+            </div>
+          </div>
+          {songList.map((file) => (
+            <ProgressBar key={file.name} file={file} />
+          ))}
         </CardContent>
       </Card>
 

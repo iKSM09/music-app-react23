@@ -1,4 +1,5 @@
 import {
+  DocumentData,
   addDoc,
   collection,
   deleteDoc,
@@ -18,19 +19,19 @@ const path = "songs";
 const songsCollection = collection(db, path);
 
 // Set a Document - requires an ID
-export const setSongDoc = async (docID: string, data: any) => {
+export const setSongDoc = async (docID: string, data: DocumentData) => {
   const docRef = doc(db, path, docID);
 
   // OR: Add a new document with a auto-generated id
   // const docRef = doc(songsCollection);
 
   // `setDoc()` requires an ID to create the document
-  await setDoc(docRef, data);
+  return await setDoc(docRef, data);
 };
 
 // Add a Document - no ID required
-export const addSongDoc = async (data: any) => {
-  await addDoc(songsCollection, data);
+export const addSongDoc = async (data: DocumentData) => {
+  return await addDoc(songsCollection, data);
 };
 
 // Update a document
@@ -57,7 +58,7 @@ export const updateSongDoc = async (dataID: string, dataToBeUpdated: any) => {
 // Delete a Document
 export const deleteSongDoc = async (docID: string) => {
   const docRef = doc(db, path, docID);
-  await deleteDoc(docRef);
+  return await deleteDoc(docRef);
 };
 
 // Delete Document fields
@@ -79,6 +80,8 @@ export const getSongDoc = async (docID: string) => {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
   }
+
+  return docSnap;
 };
 
 // Get multiple Documents

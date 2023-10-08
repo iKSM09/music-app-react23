@@ -7,9 +7,14 @@ const useCurrentUser = () => {
   const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedListener((user) =>
-      setCurrentUser(user)
-    );
+    const unsubscribe = onAuthStateChangedListener(async (user) => {
+      if (user) {
+        setCurrentUser(user);
+        console.log("USER:", user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
 
     return unsubscribe;
   }, []);

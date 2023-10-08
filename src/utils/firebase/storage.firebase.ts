@@ -10,10 +10,15 @@ import { storage } from ".";
 
 const path = "songs";
 
+// Create a Upload Task
+export const createUploadTask = (file: File) => {
+  const storageRef = ref(storage, `${path}/${file.name}`);
+  return uploadBytesResumable(storageRef, file);
+};
+
 // Upload a file
 export const uploadFile = async (file: File) => {
-  const imageRef = ref(storage, `${path}/${file.name}`);
-  const uploadTask = uploadBytesResumable(imageRef, file);
+  const uploadTask = createUploadTask(file);
 
   try {
     const snapshot = await uploadTask;
@@ -29,8 +34,7 @@ export const uploadFile = async (file: File) => {
 
 // Monitor uploads
 export const monitorUploads = (file: File) => {
-  const imageRef = ref(storage, `${path}/${file.name}`);
-  const uploadTask = uploadBytesResumable(imageRef, file);
+  const uploadTask = createUploadTask(file);
 
   // Register three observers:
   // 1. 'state_changed' observer, called any time the state changes

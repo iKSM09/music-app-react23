@@ -80,6 +80,10 @@ const Navigation = () => {
               Song
             </NavLink>
           </NavigationMenuItem>
+
+          <NavigationMenuItem className={navigationMenuTriggerStyle()}>
+            <p>Hi, {user?.displayName}</p>
+          </NavigationMenuItem>
         </NavigationMenuList>
 
         <NavigationMenuList>
