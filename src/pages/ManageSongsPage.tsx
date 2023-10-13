@@ -1,19 +1,27 @@
 import { ChangeEvent, DragEvent, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
-import SongEditForm from "@/components/SongEditForm";
-
-import { Upload, Disc3, Pencil, Trash } from "lucide-react";
-
 import ProgressBar from "@/components/ProgressBar";
+import EditSongDetails from "@/components/EditSongDetails";
+
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { getUserSongDocs } from "@/utils/firebase/db.songs.firebase";
+
+import { Upload, Disc3 } from "lucide-react";
 
 const ManageSongsPage = () => {
+  const user = useCurrentUser();
+
+  const { data: songs } = useQuery({
+    queryKey: ["songsByUser"],
+    queryFn: () => getUserSongDocs(user?.uid as string),
+  });
   const [songList, setSongList] = useState<File[]>([]);
-  // const [uploads, setUploads] = useState<UploadTypes[]>([]);
+  // const [songsByUser, setSongsByUser] = useState<DocumentData[]>([]);
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -67,25 +75,15 @@ const ManageSongsPage = () => {
           />
         </CardContent>
 
-        <CardContent className="mt-1">
-          <Separator className="mb-2" />
+        {songList.length > 0 && (
+          <CardContent className="mt-1">
+            <Separator className="mb-2" />
 
-          {/* Progess Bars */}
-          <div className="w-full my-7">
-            {/* File Name */}
-            <div className="mb-1 text-sm font-bold">Just another song.mp3</div>
-            <div className="flex h-4 overflow-hidden bg-gray-200 rounded">
-              {/* Inner Progress Bar */}
-              <div
-                className="transition-all bg-blue-400 progress-bar"
-                style={{ width: "75%" }}
-              ></div>
-            </div>
-          </div>
-          {songList.map((file) => (
-            <ProgressBar key={file.name} file={file} />
-          ))}
-        </CardContent>
+            {songList.map((file) => (
+              <ProgressBar key={file.name} file={file} />
+            ))}
+          </CardContent>
+        )}
       </Card>
 
       <Card>
@@ -99,72 +97,10 @@ const ManageSongsPage = () => {
         <Separator />
 
         <CardContent className="flex flex-col items-center justify-between gap-5 mt-5">
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <p className="text-xl font-bold">Song Title</p>
-
-                <div className="flex gap-4">
-                  <Button>
-                    <Pencil size={18} />
-                  </Button>
-                  <Button variant="destructive">
-                    <Trash size={18} />
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <SongEditForm />
-            </CardContent>
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <p className="text-xl font-bold">Song Title</p>
-
-                <div className="flex gap-4">
-                  <Button>
-                    <Pencil size={18} />
-                  </Button>
-                  <Button variant="destructive">
-                    <Trash size={18} />
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-
-            {false && (
-              <CardContent>
-                <SongEditForm />
-              </CardContent>
-            )}
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <p className="text-xl font-bold">Song Title</p>
-
-                <div className="flex gap-4">
-                  <Button>
-                    <Pencil size={18} />
-                  </Button>
-                  <Button variant="destructive">
-                    <Trash size={18} />
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-
-            {false && (
-              <CardContent>
-                <SongEditForm />
-              </CardContent>
-            )}
-          </Card>
+          {songs &&
+            songs.map((song) => (
+              <EditSongDetails key={song.name} song={song} />
+            ))}
         </CardContent>
       </Card>
     </div>

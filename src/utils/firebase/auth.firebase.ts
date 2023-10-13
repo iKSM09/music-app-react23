@@ -1,6 +1,7 @@
 import {
   NextOrObserver,
   User,
+  browserLocalPersistence,
   browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -12,24 +13,7 @@ import {
 import { auth } from ".";
 import { createNewUserDoc } from "./db.user.firebase";
 
-export const loginWithPersistence = async (email: string, password: string) => {
-  setPersistence(auth, browserSessionPersistence)
-    .then(() => {
-      // Existing and future Auth states are now persisted in the current
-      // session only. Closing the window would clear any existing state even
-      // if a user forgets to sign out.
-      // ...
-      // New sign-in will be persisted with session persistence.
-      return login(email, password);
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-
-      console.error(`${errorCode}: ${errorMessage}`);
-    });
-};
+setPersistence(auth, browserLocalPersistence);
 
 // Register
 export const register = async (
@@ -50,6 +34,25 @@ export const register = async (
 // Login
 export const login = async (email: string, password: string) =>
   await signInWithEmailAndPassword(auth, email, password);
+
+export const loginWithPersistence = async (email: string, password: string) => {
+  setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+      // Existing and future Auth states are now persisted in the current
+      // session only. Closing the window would clear any existing state even
+      // if a user forgets to sign out.
+      // ...
+      // New sign-in will be persisted with session persistence.
+      return login(email, password);
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      console.error(`${errorCode}: ${errorMessage}`);
+    });
+};
 
 // Logout
 export const logout = () => signOut(auth);

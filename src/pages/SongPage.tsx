@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -10,24 +14,106 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
+import {
+  addCommentDoc,
+  getCommentsDocs,
+  getSongDoc,
+  updateSongDoc,
+} from "@/utils/firebase/db.songs.firebase";
+import useCurrentUser from "@/hooks/useCurrentUser";
+
 import { PlayCircle, MessagesSquare } from "lucide-react";
 
 const SongPage = () => {
+  const { data: user } = useCurrentUser();
+  const { songId } = useParams();
+  const queryClient = useQueryClient();
+
+  const [postComment, setPostComment] = useState({
+    sid: songId,
+    content: "",
+    datePosted: "",
+    commentor_name: "",
+    commentor_id: "",
+  });
+
+  const { data: song } = useQuery({
+    queryKey: ["song", songId],
+    queryFn: () => getSongDoc(songId!),
+  });
+
+  const { data: comments } = useQuery({
+    queryKey: ["song", songId, "comments"],
+    queryFn: () => getCommentsDocs(songId!),
+  });
+
+  const [sortedComments, setSortedComments] = useState(comments);
+  const [sortBy, setSortBy] = useState("latest");
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      setPostComment((prev) => ({
+        ...prev,
+        datePosted: new Date().toString(),
+      }));
+
+      return addCommentDoc(postComment);
+    },
+    onSuccess: () => {
+      setPostComment((prev) => ({ ...prev, content: "" }));
+
+      updateSongDoc(songId!, { comment_count: song?.comment_count + 1 });
+      queryClient.invalidateQueries({ queryKey: ["song", songId] });
+      queryClient.invalidateQueries({ queryKey: ["song", songId, "comments"] });
+    },
+  });
+
+  useEffect(() => {
+    setPostComment((prev) => ({
+      ...prev,
+      commentor_name: user?.displayName as string,
+      commentor_id: user?.uid as string,
+    }));
+  }, [user]);
+
+  useEffect(() => {
+    const getTime = (date: string) => {
+      const newDate = new Date(date);
+      return newDate != null ? newDate.getTime() : 0;
+    };
+
+    const sorted = () =>
+      comments?.sort((a, b) => {
+        return sortBy == "latest"
+          ? getTime(b.datePosted) - getTime(a.datePosted)
+          : getTime(a.datePosted) - getTime(b.datePosted);
+      });
+
+    setSortedComments(sorted());
+  }, [sortBy, comments]);
+
   return (
     <>
       <div className="flex items-center gap-5 mb-7">
         <PlayCircle size={56} className="mt-2" />
-        <h1 className="text-5xl font-bold">Song Title</h1>
+        <h1 className="text-5xl font-bold">{song?.modified_name}</h1>
       </div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <MessagesSquare />
-              <p>Comments</p>
+              <p>
+                {song?.comment_count === 0
+                  ? "No comment"
+                  : `${song?.comment_count} comments`}
+              </p>
             </div>
 
-            <Select defaultValue="latest">
+            <Select
+              defaultValue="latest"
+              onValueChange={(val) => setSortBy(val)}
+            >
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -42,57 +128,35 @@ const SongPage = () => {
         <Separator />
 
         <CardContent className="flex flex-col gap-5 mt-5">
-          <Textarea placeholder="Your comment here..." />
-          <Button className="w-fit">Submit</Button>
+          <Textarea
+            value={postComment.content}
+            onChange={(e) =>
+              setPostComment((prev) => ({
+                ...prev,
+                content: e.target.value,
+                datePosted: new Date().toString(),
+              }))
+            }
+            placeholder="Your comment here..."
+          />
+          <Button onClick={() => mutation.mutateAsync()} className="w-fit">
+            Submit
+          </Button>
         </CardContent>
 
-        <Separator />
+        {sortedComments &&
+          sortedComments.map((comment) => (
+            <>
+              <Separator />
 
-        <CardContent className="mt-5">
-          <h3 className="text-lg font-bold">John Doe</h3>
-          <small>5 mins ago</small>
+              <CardContent key={comment.id} className="mt-5">
+                <h3 className="text-lg font-bold">{comment.commentor_name}</h3>
+                <small>{comment.datePosted}</small>
 
-          <p className="mt-4">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium der doloremque laudantium.
-          </p>
-        </CardContent>
-
-        <Separator />
-
-        <CardContent className="mt-5">
-          <h3 className="text-lg font-bold">John Doe</h3>
-          <small>5 mins ago</small>
-
-          <p className="mt-4">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium der doloremque laudantium.
-          </p>
-        </CardContent>
-
-        <Separator />
-
-        <CardContent className="mt-5">
-          <h3 className="text-lg font-bold">John Doe</h3>
-          <small>5 mins ago</small>
-
-          <p className="mt-4">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium der doloremque laudantium.
-          </p>
-        </CardContent>
-
-        <Separator />
-
-        <CardContent className="mt-5">
-          <h3 className="text-lg font-bold">John Doe</h3>
-          <small>5 mins ago</small>
-
-          <p className="mt-4">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium der doloremque laudantium.
-          </p>
-        </CardContent>
+                <p className="mt-4">{comment.content}</p>
+              </CardContent>
+            </>
+          ))}
       </Card>
     </>
   );

@@ -1,14 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  Headphones,
-  PlayCircle,
-  PauseCircle,
-  Heart,
-  MessagesSquare,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+
+import SongsListItem from "./SongsListItem";
+
+import { getAllSongDocs } from "@/utils/firebase/db.songs.firebase";
+
+import { Headphones } from "lucide-react";
 
 const SongsList = () => {
+  const { data: songs } = useQuery({
+    queryKey: ["songs"],
+    queryFn: () => getAllSongDocs(),
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -18,53 +23,9 @@ const SongsList = () => {
         </CardTitle>
       </CardHeader>
 
-      <Separator />
-
-      <CardContent className="flex items-center justify-between mt-5">
-        <div className="flex items-start gap-3">
-          <div className="my-[3px]">
-            {true ? <PlayCircle /> : <PauseCircle />}
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Song Title</h3>
-            <p>Uploaded by</p>
-          </div>
-        </div>
-        <div className="flex gap-6">
-          <div className="flex gap-1">
-            <Heart />
-            <p>20k</p>
-          </div>
-          <div className="flex gap-1">
-            <MessagesSquare />
-            <p>No Comments</p>
-          </div>
-        </div>
-      </CardContent>
-
-      <Separator />
-
-      <CardContent className="flex items-center justify-between mt-5">
-        <div className="flex items-start gap-3">
-          <div className="my-[2px]">
-            {true ? <PlayCircle /> : <PauseCircle />}
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Song Title</h3>
-            <p>Uploaded by</p>
-          </div>
-        </div>
-        <div className="flex gap-6">
-          <div className="flex gap-1">
-            <Heart />
-            <p>20k</p>
-          </div>
-          <div className="flex gap-1">
-            <MessagesSquare />
-            <p>No Comments</p>
-          </div>
-        </div>
-      </CardContent>
+      {songs?.map((song) => (
+        <SongsListItem key={song.id} song={song} />
+      ))}
     </Card>
   );
 };

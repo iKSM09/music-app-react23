@@ -114,16 +114,18 @@ export const getDownloadURLForFile = async (snapshot: UploadTaskSnapshot) => {
 };
 
 // Delete a file
-export const deleteFile = () => {
+export const deleteFile = (name: string) => {
   // Create a reference to the file to delete
-  const desertRef = ref(storage, "images/desert.jpg");
+  const desertRef = ref(storage, `${path}/${name}`);
 
   // Delete the file
   deleteObject(desertRef)
     .then(() => {
       // File deleted successfully
+      console.log("Song successfully deleted.");
     })
     .catch((error) => {
       // Uh-oh, an error occurred!
+      console.error("deleteSongError:", error);
     });
 };

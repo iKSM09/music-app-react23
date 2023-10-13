@@ -1,33 +1,31 @@
 import { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import PuffLoader from "react-spinners/PuffLoader";
-import { Check, X } from "lucide-react";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { addSongDoc } from "@/utils/firebase/db.songs.firebase";
 import {
   createUploadTask,
   getDownloadURLForFile,
 } from "@/utils/firebase/storage.firebase";
-import useCurrentUser from "@/hooks/useCurrentUser";
-import {
-  addSongDoc,
-  getSongDoc,
-  setSongDoc,
-} from "@/utils/firebase/db.songs.firebase";
+
+import { Check, X } from "lucide-react";
+import PuffLoader from "react-spinners/PuffLoader";
 
 type ProgressBarTypes = {
   file: File;
 };
 
-type StatusType = "ideal" | "loading" | "success" | "error";
+type StatusType = "idle" | "loading" | "success" | "error";
 
 const progressBarColor = {
-  ideal: "bg-blue-400",
+  idle: "bg-blue-400",
   loading: "bg-blue-400",
   success: "bg-green-400",
   error: "bg-red-400",
 };
 
 const textColor = {
-  ideal: "",
+  idle: "",
   loading: "",
   success: "text-green-400",
   error: "text-red-400",
@@ -35,30 +33,33 @@ const textColor = {
 
 const ProgressBar = ({ file }: ProgressBarTypes) => {
   const user = useCurrentUser();
+  const queryClient = useQueryClient();
+
   const [song, setSong] = useState({
     uploader: user?.displayName,
     uploader_id: user?.uid,
     name: file.name,
-    modified_name: "",
+    modified_name: file.name,
     genre: "",
     comment_count: 0,
     like_count: 0,
     url: "",
   });
-  // const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
+  const [downloadURL, setDownloadURL] = useState("");
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<StatusType>("ideal");
+  const [status, setStatus] = useState<StatusType>("idle");
 
-  // console.log("progressBar", user?.displayName, user?.email);
-
-  useEffect(() => {
-    setSong((prev) => ({
-      ...prev,
-      uploader: user?.displayName,
-      uploader_id: user?.uid,
-    }));
-  }, [user]);
+  const { mutateAsync } = useMutation({
+    mutationKey: [file.name],
+    mutationFn: async () => {
+      return await addSongDoc(song);
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["songsByUser"] });
+      queryClient.invalidateQueries({ queryKey: ["songs"] });
+    },
+    retry: true,
+  });
 
   useEffect(() => {
     if (file.type !== "audio/mpeg") return;
@@ -66,8 +67,6 @@ const ProgressBar = ({ file }: ProgressBarTypes) => {
       setProgress(100);
       setStatus("error");
     }
-
-    // console.log("progressBar:useEffect", user?.displayName, user?.email);
 
     const uploadTask = createUploadTask(file);
     setStatus("loading");
@@ -82,34 +81,34 @@ const ProgressBar = ({ file }: ProgressBarTypes) => {
         console.error("uploading failed", error);
       },
       async () => {
-        const downloadURL = (await getDownloadURLForFile(
+        const url = (await getDownloadURLForFile(
           uploadTask.snapshot
         )) as string;
 
         setSong((prev) => ({
           ...prev,
-          modified_name: uploadTask.snapshot.ref.name,
-          url: downloadURL,
+          url,
         }));
 
-        setUrl(downloadURL);
+        setStatus("success");
+        setDownloadURL(url);
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [file]);
 
   useEffect(() => {
-    (async () => {
-      const songRef = await addSongDoc(song);
-      const songSnapshot = await getSongDoc(songRef.id);
+    setSong((prev) => ({
+      ...prev,
+      url: downloadURL,
+    }));
 
-      // addSong(songSnapshot);
-      console.log("songSnapshot", songSnapshot.data());
+    console.log({ song });
 
-      setStatus("success");
-    })();
+    mutateAsync();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url]);
+  }, [downloadURL]);
 
   return (
     <div className="w-full my-7">
@@ -117,18 +116,16 @@ const ProgressBar = ({ file }: ProgressBarTypes) => {
       <div
         className={`mb-1 text-sm font-bold flex gap-1 items-center ${textColor[status]}`}
       >
-        {status == "error" ? (
-          <X size={18} />
-        ) : status == "success" ? (
-          <Check size={18} />
-        ) : (
+        {status == "error" ? <X size={18} /> : null}
+        {status == "success" ? <Check size={18} /> : null}
+        {status == "loading" ? (
           <PuffLoader
             color={"#60A5FA"}
             size={16}
             aria-label="Puff Loader"
             data-testid="loader"
           />
-        )}
+        ) : null}
         {song.name}
       </div>
       <div className="flex h-4 overflow-hidden bg-gray-200 rounded">

@@ -60,6 +60,10 @@ const Navigation = () => {
           </NavigationMenuItem>
 
           <NavigationMenuItem className={navigationMenuTriggerStyle()}>
+            <p>Hi, {user?.displayName}</p>
+          </NavigationMenuItem>
+
+          <NavigationMenuItem className={navigationMenuTriggerStyle()}>
             <NavLink
               to="/manage"
               className={({ isActive, isPending }) =>
@@ -68,21 +72,6 @@ const Navigation = () => {
             >
               Manage
             </NavLink>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem className={navigationMenuTriggerStyle()}>
-            <NavLink
-              to="/song/songId"
-              className={({ isActive, isPending }) =>
-                isPending ? "text-secondary" : isActive ? "text-primary" : ""
-              }
-            >
-              Song
-            </NavLink>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem className={navigationMenuTriggerStyle()}>
-            <p>Hi, {user?.displayName}</p>
           </NavigationMenuItem>
         </NavigationMenuList>
 
