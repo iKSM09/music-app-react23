@@ -14,6 +14,7 @@ import {
 } from "@/utils/firebase/db.songs.firebase";
 
 import { Heart, MessagesSquare, PauseCircle, PlayCircle } from "lucide-react";
+import { playerStore } from "@/context/player.store";
 
 type SongsListItem = {
   song: DocumentData;
@@ -21,6 +22,11 @@ type SongsListItem = {
 
 const SongsListItem = ({ song }: SongsListItem) => {
   const user = useCurrentUser();
+  const [currentSong, playing, newSong] = playerStore((state) => [
+    state.currentSong,
+    state.playing,
+    state.newSong,
+  ]);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
@@ -52,13 +58,14 @@ const SongsListItem = ({ song }: SongsListItem) => {
     <>
       <Separator />
 
-      <CardContent
-        key={song.id}
-        className="flex items-center justify-between mt-5"
-      >
+      <CardContent className="flex items-center justify-between mt-5">
         <div className="flex items-start gap-3">
-          <div className="my-[3px]">
-            {true ? <PlayCircle /> : <PauseCircle />}
+          <div onClick={() => newSong(song)} className="my-[3px]">
+            {currentSong.id === song.id && playing ? (
+              <PauseCircle />
+            ) : (
+              <PlayCircle />
+            )}
           </div>
           <div>
             <Link to={`song/${song.id}`} className="text-lg font-bold">

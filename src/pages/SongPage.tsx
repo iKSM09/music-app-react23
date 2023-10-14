@@ -23,11 +23,14 @@ import {
 import useCurrentUser from "@/hooks/useCurrentUser";
 
 import { PlayCircle, MessagesSquare } from "lucide-react";
+import { playerStore } from "@/context/player.store";
 
 const SongPage = () => {
-  const { data: user } = useCurrentUser();
+  const user = useCurrentUser();
   const { songId } = useParams();
   const queryClient = useQueryClient();
+
+  const newSong = playerStore((state) => state.newSong);
 
   const [postComment, setPostComment] = useState({
     sid: songId,
@@ -36,6 +39,7 @@ const SongPage = () => {
     commentor_name: "",
     commentor_id: "",
   });
+  // const [playing, setPlaying] = useState(false);
 
   const { data: song } = useQuery({
     queryKey: ["song", songId],
@@ -92,10 +96,30 @@ const SongPage = () => {
     setSortedComments(sorted());
   }, [sortBy, comments]);
 
+  // const handlePlaySong = () => {
+  //   if (sound instanceof Howl) return sound.unload();
+
+  //   const sound = new Howl({
+  //     src: [song?.url],
+  //     html5: true,
+  //   });
+
+  //   if (playing) {
+  //     setPlaying(false);
+  //     sound.pause();
+  //   } else {
+  //     setPlaying(true);
+  //     sound.play();
+  //   }
+  // };
+
   return (
     <>
       <div className="flex items-center gap-5 mb-7">
-        <PlayCircle size={56} className="mt-2" />
+        <div onClick={() => newSong(song!)} className="mt-2 cursor-pointer">
+          {/* {playing ? <PauseCircle size={56} /> : <PlayCircle size={56} />} */}
+          <PlayCircle size={56} />
+        </div>
         <h1 className="text-5xl font-bold">{song?.modified_name}</h1>
       </div>
       <Card>
