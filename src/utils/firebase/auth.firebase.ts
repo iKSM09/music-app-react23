@@ -2,7 +2,6 @@ import {
   NextOrObserver,
   User,
   browserLocalPersistence,
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   setPersistence,
