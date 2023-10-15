@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { useAtom } from "jotai";
 
 import {
   NavigationMenu,
@@ -21,18 +21,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 
+import Auth from "./Auth";
+import NavigationLink from "./NavigationLink";
+
+import { logout } from "@/utils/firebase/auth.firebase";
+import useCurrentUser from "@/hooks/useCurrentUser";
 import { useThemeContext } from "@/context";
+import { authDialogAtom } from "@/context/atoms";
 
 import { Sun, Moon } from "lucide-react";
-import Auth from "./Auth";
-
-import useCurrentUser from "@/hooks/useCurrentUser";
-import { Button } from "./ui/button";
-import { useAtom } from "jotai";
-import { authDialogAtom } from "@/context/atoms";
-import { logout } from "@/utils/firebase/auth.firebase";
 
 const Navigation = () => {
   const user = useCurrentUser();
@@ -49,14 +49,9 @@ const Navigation = () => {
       <NavigationMenu className="flex items-center justify-between h-16 max-w-full px-6 border-b ">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavLink
-              to="/"
-              className={({ isActive, isPending }) =>
-                isPending ? "text-secondary" : isActive ? "text-primary" : ""
-              }
-            >
+            <NavigationLink to="/">
               <p className="mr-2 text-2xl font-bold">Music</p>
-            </NavLink>
+            </NavigationLink>
           </NavigationMenuItem>
 
           <NavigationMenuItem className={navigationMenuTriggerStyle()}>
@@ -64,14 +59,7 @@ const Navigation = () => {
           </NavigationMenuItem>
 
           <NavigationMenuItem className={navigationMenuTriggerStyle()}>
-            <NavLink
-              to="/manage"
-              className={({ isActive, isPending }) =>
-                isPending ? "text-secondary" : isActive ? "text-primary" : ""
-              }
-            >
-              Manage
-            </NavLink>
+            <NavigationLink to="/manage">Manage</NavigationLink>
           </NavigationMenuItem>
         </NavigationMenuList>
 
