@@ -1,4 +1,4 @@
-import { ErrorResponse, useRouteError } from "react-router-dom";
+import { ErrorResponse, Link, useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;
@@ -11,6 +11,8 @@ export default function ErrorPage() {
       <p>
         <i>{error.statusText || error.data.message}</i>
       </p>
+      <br />
+      <Link to="/">Home</Link>
     </div>
   );
 }
