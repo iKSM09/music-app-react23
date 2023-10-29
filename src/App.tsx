@@ -14,42 +14,42 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 const queryClient = new QueryClient();
 
 const router = createHashRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        // element: <HomePage />,
-        Component: HomePage,
-      },
-      {
-        element: <ProtectedRoute />,
+    {
+        path: "/*",
+        element: <Root />,
+        errorElement: <ErrorPage />,
         children: [
-          {
-            path: "/manage",
-            Component: ManageSongsPage,
-          },
+            {
+                index: true,
+                // element: <HomePage />,
+                Component: HomePage,
+            },
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    {
+                        path: "/manage",
+                        Component: ManageSongsPage,
+                    },
+                ],
+            },
+            {
+                path: "/song/:songId",
+                Component: SongPage,
+            },
         ],
-      },
-      {
-        path: "/song/:songId",
-        Component: SongPage,
-      },
-    ],
-  },
+    },
 ]);
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
-      </ThemeProvider>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+                <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+            </ThemeProvider>
+            <ReactQueryDevtools />
+        </QueryClientProvider>
+    );
 }
 
 export default App;
