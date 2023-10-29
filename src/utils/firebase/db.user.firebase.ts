@@ -1,6 +1,7 @@
+import type { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+
 import { db } from ".";
-import { User } from "firebase/auth";
 
 // Get User Data
 export const getUserData = async (user: User) => {

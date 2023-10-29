@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DocumentData } from "firebase/firestore";
 
-import { CardContent } from "./ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Separator } from "@radix-ui/react-separator";
 
 import useCurrentUser from "@/hooks/useCurrentUser";

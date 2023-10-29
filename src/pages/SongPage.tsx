@@ -117,7 +117,6 @@ const SongPage = () => {
     <>
       <div className="flex items-center gap-5 mb-7">
         <div onClick={() => newSong(song!)} className="mt-2 cursor-pointer">
-          {/* {playing ? <PauseCircle size={56} /> : <PlayCircle size={56} />} */}
           <PlayCircle size={56} />
         </div>
         <h1 className="text-5xl font-bold">{song?.modified_name}</h1>

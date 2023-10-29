@@ -1,6 +1,4 @@
 import {
-  NextOrObserver,
-  User,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -9,6 +7,8 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import type { User, NextOrObserver } from "firebase/auth";
+
 import { auth } from ".";
 import { createNewUserDoc } from "./db.user.firebase";
 
